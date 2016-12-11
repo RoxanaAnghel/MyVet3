@@ -29,7 +29,7 @@ const routes=[
 
 
 const onButtonPress=()=>{
-    Alert.alert('add a pet not implemented');
+    Alert.alert('add pet');
 }
 
 export default class AwesomeProject2 extends Component {
