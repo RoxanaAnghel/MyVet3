@@ -11,11 +11,14 @@ import {
   Text,
   View,
   Navigator,
-  ListView
+  ListView,
+  Button,
+  Alert
 } from 'react-native';
 
 
 import PetList from './petList.js';
+
 
 const routes=[
   {
@@ -25,7 +28,9 @@ const routes=[
 ]
 
 
-
+const onButtonPress=()=>{
+    Alert.alert('add a pet not implemented');
+}
 
 export default class AwesomeProject2 extends Component {
   render() {
@@ -34,6 +39,14 @@ export default class AwesomeProject2 extends Component {
         <Text> Welcome </Text>
       
         <PetList> </PetList>
+
+        <Button
+            onPress={onButtonPress}
+            title="Add buton"
+            color="#841584"
+            accessibilityLabel="Learn more about this purple button"
+/>
+
         </View>
     );
   }
