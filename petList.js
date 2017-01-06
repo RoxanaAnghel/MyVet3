@@ -6,48 +6,38 @@ import {
 	Text
 } from 'react-native';
 
-const styles=StyleSheet.create({
-	container:{
-		flex:1,
-		marginTop:20,
-	},
-});
+import { List, ListItem } from 'react-native-elements'
 
-var pets =['Puppy1','Puppy1','Puppy1','Puppy1','Puppy1','Puppy1','Puppy1','Puppy1','Puppy1','Puppy1','Puppy1']
+const list = [
+  {
+    name: 'Puppy #1',
+    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+    subtitle: 'Subtitle here'
+  },
+  {
+    name: 'Puppy #2',
+    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+    subtitle: 'Subtitle here'
+  }
+]
 
 class PetList extends React.Component{
-    constructor(props){
-        super(props);
-        const ds=new ListView.DataSource({rowHasChanged:(r1,r2)=>r1!==r2});
-        this.state={
-            dataSource:ds.cloneWithRows(['row 1', 'row 2']),
-            petsList:[],
-            loded:true
-        };
-    }
-    componentDidMount(){
-    	this.fetchData();
-  	}
-  	fetchData(){
-  		this.state.petsList=pets;
-  		this.setState({
-              dataSource: this.state.dataSource.cloneWithRows(this.state.petsList),
-              loaded: true,
-	   });
-
-  	}
     render(){
-
     		return (
-            <ListView 
-                dataSource={this.state.dataSource}
-                renderRow={(rowData)=><Text> {rowData} </Text> }
-            />
-    		
-        
+					<List containerStyle={{marginBottom: 20}}>
+  {
+    list.map((l, i) => (
+      <ListItem
+        roundAvatar
+        avatar={{uri:l.avatar_url}}
+        key={i}
+        title={l.name}
+		      />
+		    ))
+		  }
+					</List>
          );
 	}
 }
-
 
 export default PetList;
