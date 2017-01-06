@@ -8,7 +8,6 @@ import {
   Text,
   View,
   Navigator,
-  ListView,
   Button,
   Alert,
   Image,
@@ -28,7 +27,9 @@ import {
   Icon,
   FormLabel,
   FormInput,
-  TextInput
+  TextInput,
+  List,
+  ListItem,
 } from 'react-native-elements'
 
 var Mailer = require('NativeModules').RNMail;
@@ -41,6 +42,8 @@ const Router = createRouter(() => ({
   petlist: () => PetListScreen,
   contact: () => ContactScreen,
 }));
+
+const Realm = require('realm');
 
 class MyVetApp extends React.Component {
   render() {
@@ -77,6 +80,13 @@ class DashboardScreen extends React.Component {
   }
 }
 
+const PetSchema = {
+  name: 'Pet',
+  properties: {
+    pets: {name: 'Pet', properties: {name: 'string', avatar_url: 'string', type: 'string'}},
+  }
+}
+
 class PetListScreen extends React.Component {
 
   static route = {
@@ -86,9 +96,31 @@ class PetListScreen extends React.Component {
   }
 
   render() {
+    let realm = new Realm({
+     schema: [{name: 'Pet', properties: {name: 'string', avatar_url: 'string', type: 'string'}}]
+   });
+
+   let pets = realm.objects('Pet')
+
+
+    realm.write(() => {
+      realm.create('Pet', {name: 'Puppy #8', avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg', type: 'Dog'});
+    });
+
     return (
-      <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
-      <Text>Pet list here</Text>
+      <View style={{flex: 1}}>
+      <List containerStyle={{marginBottom: 20}}>
+        {
+          pets.map((l, i) => (
+            <ListItem
+              roundAvatar
+              avatar={{uri:l.avatar_url}}
+              key={i}
+              title={l.name}
+            />
+          ))
+        }
+      </List>
       </View>
     )
   }
@@ -110,7 +142,7 @@ class ContactScreen extends React.Component {
   }
   render() {
     return (
-      <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+      <View style={{flex: 1}}>
           <FormLabel>Name</FormLabel>
           <FormInput ref='forminput' textInputRef='name' inputStyle={{height: 80, width: 300}} onChangeText={(name) => this.setState({name})} value={this.state.name} />
           <FormLabel>Address</FormLabel>
@@ -124,9 +156,9 @@ class ContactScreen extends React.Component {
   sendEmail = () => {
     Mailer.mail({
       subject: 'Message from MyVet Android app',
-      recipients: ['alex.szilagyi@gmail.com'],
-      ccRecipients: ['alex.szilagyi@gmail.com'],
-      bccRecipients: ['alex.szilagyi@gmail.com'],
+      recipients: ['roxana.anghel11@gmail.com'],
+      ccRecipients: ['roxana.anghel11@gmail.com'],
+      bccRecipients: ['roxana.anghel11@gmail.com'],
       body: this.refs.forminput.refs.message
     }, (error, event) => {
         if(error) {
@@ -134,9 +166,6 @@ class ContactScreen extends React.Component {
         }
     });
   }
-  // _goToContact = () => {
-  //   this.props.navigator.push(Router.getRoute('petlist'));
-  // }
 }
 
 AppRegistry.registerComponent('MyVet', () => MyVetApp);

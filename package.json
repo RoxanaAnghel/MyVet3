@@ -17,6 +17,7 @@
     "react-native-material-design": "^0.3.7",
     "react-native-send-intent": "^1.0.14",
     "react-native-vector-icons": "^3.0.0",
+    "realm": "^0.15.2",
     "whatwg-fetch": "^1.1.1"
   },
   "devDependencies": {
