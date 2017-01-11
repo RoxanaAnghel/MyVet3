@@ -67,8 +67,8 @@ class DashboardScreen extends React.Component {
     return (
       <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
         <Image resizeMode="cover" source={require('./img/AppLogo.png')} />
-        <Button raised icon={{name: 'cached'}} title='PET LIST' onPress={this._goToPetList} />
-        <Button raised icon={{name: 'cached'}} onPress={this._goToContact} title='CONTACT' />
+        <Button large raised icon={{name: 'cached'}} title='PET LIST' onPress={this._goToPetList} />
+        <Button large raised icon={{name: 'cached'}} onPress={this._goToContact} title='CONTACT' />
       </View>
     )
   }
@@ -154,15 +154,20 @@ class ContactScreen extends React.Component {
     )
   }
   sendEmail = () => {
+    let message=this.state.message;
     Mailer.mail({
       subject: 'Message from MyVet Android app',
       recipients: ['roxana.anghel11@gmail.com'],
       ccRecipients: ['roxana.anghel11@gmail.com'],
       bccRecipients: ['roxana.anghel11@gmail.com'],
-      body: this.refs.forminput.refs.message
+      body: message,
+      attachment: {
+        path: '',  // The absolute path of the file from which to read data.
+        type: '',   // Mime Type: jpg, png, doc, ppt, html, pdf
+        name: '',   // Optional: Custom filename for attachment
+      }
     }, (error, event) => {
         if(error) {
-
         }
     });
   }
