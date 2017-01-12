@@ -6,20 +6,16 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
+  ListView,
   View,
   Navigator,
   Button,
   Alert,
   Image,
+  RecyclerViewBackedScrollView,
   TouchableHighlight,
   TouchableOpacity,
 } from 'react-native';
-
-import {
-  createRouter,
-  NavigationProvider,
-  StackNavigation,
-} from '@exponent/ex-navigation'
 
 import {
   Tabs,
@@ -32,145 +28,150 @@ import {
   ListItem,
 } from 'react-native-elements'
 
-var Mailer = require('NativeModules').RNMail;
-
-//TODO: Investigate why it doesn't works with separate file
-// var Dashboard = require('./Dashboard');
-
-const Router = createRouter(() => ({
-  dashboard: () => DashboardScreen,
-  petlist: () => PetListScreen,
-  contact: () => ContactScreen,
-}));
+import store from './database/PetStore'
+import Emitter from 'EventEmitter'
 
 const Realm = require('realm');
+const navEvents = new Emitter()
+
+import Dashboard from './screens/Dashboard'
+import PetList from './screens/PetList'
+import PetDetail from './screens/PetDetail'
+import PetNew from './screens/PetNew'
+import PetEdit from './screens/PetEdit'
+import Contact from './screens/Contact'
 
 class MyVetApp extends React.Component {
   render() {
     return (
-      <NavigationProvider router={Router}>
-        <StackNavigation initialRoute={Router.getRoute('dashboard')} />
-      </NavigationProvider>
+      <Navigator
+        style={styles.container}
+        initialRoute={{ id: 'home', title: 'Home', props: { navEvents } }}
+        renderScene={this.navigatorRenderScene}
+        navigationBar={
+          <Navigator.NavigationBar
+            routeMapper={NavigationBarRouteMapper}
+            style={styles.navBar}
+          />
+        }
+        />
     );
   }
-}
 
-class DashboardScreen extends React.Component {
-
-  static route = {
-    navigationBar: {
-      title: 'Home',
+  navigatorRenderScene (route, navigator) {
+    switch (route.id) {
+      case 'home':
+        return <Dashboard navigator={navigator}
+                       store={store}
+                       {...route.props}
+                       />
+       case 'petList':
+         return <PetList navigator={navigator}
+                        store={store}
+                        {...route.props}
+                        />
+       case 'petDetail':
+         return <PetDetail navigator={navigator}
+                       store={store}
+                       {...route.props}
+                       />
+       case 'petEdit':
+         return <PetEdit navigator={navigator}
+                       store={store}
+                       {...route.props}
+                       />
+      case 'petNew':
+         return <PetNew navigator={navigator}
+                       store={store}
+                       {...route.props}
+                       />
+      case 'contact':
+        return <Contact navigator={navigator}
+                       store={store}
+                       {...route.props}
+                       />
     }
   }
+}
 
-  render() {
+const NavigationBarRouteMapper = {
+  LeftButton (route, navigator, index, navState) {
+    if (index === 0) {
+      return null
+    }
+    var previousRoute = navState.routeStack[index - 1]
     return (
-      <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
-        <Image resizeMode="cover" source={require('./img/AppLogo.png')} />
-        <Button large raised icon={{name: 'cached'}} title='PET LIST' onPress={this._goToPetList} />
-        <Button large raised icon={{name: 'cached'}} onPress={this._goToContact} title='CONTACT' />
-      </View>
+      <TouchableOpacity
+        onPress={() => navigator.pop()}
+        style={styles.navBarLeftButton}>
+        <Text style={[styles.navBarText, styles.navBarButtonText]}>
+          {previousRoute.title}
+        </Text>
+      </TouchableOpacity>
     )
-  }
-  _goToPetList = () => {
-    this.props.navigator.push(Router.getRoute('petlist'));
-  }
-  _goToContact = () => {
-    this.props.navigator.push(Router.getRoute('contact'));
-  }
-}
+  },
 
-const PetSchema = {
-  name: 'Pet',
-  properties: {
-    pets: {name: 'Pet', properties: {name: 'string', avatar_url: 'string', type: 'string'}},
-  }
-}
-
-class PetListScreen extends React.Component {
-
-  static route = {
-    navigationBar: {
-      title: 'Pets',
-    }
-  }
-
-  render() {
-    let realm = new Realm({
-     schema: [{name: 'Pet', properties: {name: 'string', avatar_url: 'string', type: 'string'}}]
-   });
-
-   let pets = realm.objects('Pet')
-
-
-    realm.write(() => {
-      realm.create('Pet', {name: 'Puppy #8', avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg', type: 'Dog'});
-    });
-
-    return (
-      <View style={{flex: 1}}>
-      <List containerStyle={{marginBottom: 20}}>
-        {
-          pets.map((l, i) => (
-            <ListItem
-              roundAvatar
-              avatar={{uri:l.avatar_url}}
-              key={i}
-              title={l.name}
-            />
-          ))
+  RightButton (route, navigator, index, navState) {
+    switch (route.id) {
+      case 'petList':
+          if (route.props.pet) {
+            console.log(route.props.item);
+               return <View/>
+          }
+        return (
+          <TouchableOpacity
+            onPress={() => navigator.push({id: 'petNew', title:'New', props:{ navEvents }}) }
+            style={styles.navBarRightButton}>
+            <Text style={[styles.navBarText, styles.navBarButtonText]}>
+              Add
+            </Text>
+          </TouchableOpacity>
+        )
+      case 'petNew':
+        if (route.props.pet) {
+          return <View/>
         }
-      </List>
-      </View>
-    )
-  }
-  // _goToPetList = () => {
-  //   this.props.navigator.push(Router.getRoute('petlist'));
-  // }
-}
-
-class ContactScreen extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = { name: 'Your name', address: 'Your address', message: 'Your message' };
-  }
-  static route = {
-    navigationBar: {
-      title: 'Contact',
+        return (
+          <TouchableOpacity
+            onPress={() => route.props.navEvents.emit('save')}
+            style={styles.navBarRightButton}>
+            <Text style={[styles.navBarText, styles.navBarButtonText]}>
+              Save
+            </Text>
+          </TouchableOpacity>
+        )
     }
-  }
-  render() {
-    return (
-      <View style={{flex: 1}}>
-          <FormLabel>Name</FormLabel>
-          <FormInput ref='forminput' textInputRef='name' inputStyle={{height: 80, width: 300}} onChangeText={(name) => this.setState({name})} value={this.state.name} />
-          <FormLabel>Address</FormLabel>
-          <FormInput ref='forminput' textInputRef='address' inputStyle={{height: 80, width: 300}} onChangeText={(address) => this.setState({address})} value={this.state.address} />
-          <FormLabel>Message</FormLabel>
-          <FormInput ref='forminput' textInputRef='message'  multiline = {true} inputStyle={{height: 180, width: 300}} onChangeText={(message) => this.setState({message})} value={this.state.message} />
-          <Button large onPress={this.sendEmail.bind()} large icon={{name: 'squirrel', type: 'octicon' }} title='SEND' />
-      </View>
-    )
-  }
-  sendEmail = () => {
-    let message=this.state.message;
-    Mailer.mail({
-      subject: 'Message from MyVet Android app',
-      recipients: ['roxana.anghel11@gmail.com'],
-      ccRecipients: ['roxana.anghel11@gmail.com'],
-      bccRecipients: ['roxana.anghel11@gmail.com'],
-      body: message,
-      attachment: {
-        path: '',  // The absolute path of the file from which to read data.
-        type: '',   // Mime Type: jpg, png, doc, ppt, html, pdf
-        name: '',   // Optional: Custom filename for attachment
-      }
-    }, (error, event) => {
-        if(error) {
-        }
-    });
+  },
+
+  Title (route, navigator, index, navState) {
+    return <Text style={[styles.navBarText, styles.navBarTitleText]}>{route.title}</Text>
   }
 }
+
+const styles = StyleSheet.create({
+  navBar: {
+    backgroundColor: 'white'
+  },
+  navBarText: {
+    fontSize: 16,
+    marginVertical: 10
+  },
+  navBarTitleText: {
+    color: '#000',
+    fontWeight: '500',
+    marginVertical: 9,
+    marginRight: 10,
+    marginLeft: 10
+  },
+  navBarLeftButton: {
+    paddingLeft: 10
+  },
+  navBarRightButton: {
+    paddingRight: 10
+  },
+  navBarButtonText: {
+    color: '#4F8EF7'
+  }
+})
 
 AppRegistry.registerComponent('MyVet', () => MyVetApp);
