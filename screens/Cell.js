@@ -12,7 +12,7 @@ export default (props) => {
   return <TouchableOpacity style={styles.sep} onPress={props.onPress}>
     <View style={{flexDirection: 'row'}}>
       <View style={styles.content}>
-        <Text style={styles.text}>{props.pet}</Text>
+        <Text style={styles.text}>{props.pet && props.pet.name || '-'}</Text>
       </View>
       <View style={styles.actions}>
         <TouchableOpacity onPress={props.onDelete}>

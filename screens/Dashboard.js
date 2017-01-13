@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import {
-  Button,
   Text,
   View,
   Image,
   StyleSheet
 } from 'react-native';
+
+import { Button } from 'react-native-elements'
 
 import Subscribable from 'Subscribable'
 import mixin from 'react-mixin'
@@ -16,8 +17,8 @@ class Dashboard extends React.Component {
     return (
       <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
         <Image resizeMode="cover" source={require('./../img/AppLogo.png')} />
-        <Button large raised icon={{name: 'cached'}} title='PET LIST' onPress={this._goToPetList} />
-        <Button large raised icon={{name: 'cached'}} onPress={this._goToContact} title='CONTACT' />
+        <Button large="true" iconLeft raised icon={{name: 'pets'}} title='PET LIST' onPress={this._goToPetList} />
+        <Button large="true" iconLeft raised icon={{name: 'contact-mail'}} onPress={this._goToContact} title='CONTACT' />
       </View>
     )
   }

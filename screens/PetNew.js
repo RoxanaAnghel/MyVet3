@@ -21,12 +21,25 @@ class PetNew extends React.Component {
   }
 
   onSave () {
-    this.props.store.add(new Date().toLocaleTimeString())
+
+    var pet = {};
+    pet.name = "Rex";
+    pet.age = "3";
+    pet.petType = "dog";
+    pet.weight = "5.50";
+    pet.birthday = new Date("October 7, 2013 13:13:00");
+    this.props.store.add(pet)
     this.props.navigator.pop()
   }
 
   render () {
-    return <View style={styles.container}><Text>{this.props.pet || new Date().toString()}</Text></View>
+    return <View style={styles.container}>
+        <Text>Pet name: {this.props.pet && this.props.pet.name || '-'}</Text>
+        <Text>Pet age: {this.props.pet && this.props.pet.age || '-'}</Text>
+        <Text>Pet petType: {this.props.pet && this.props.pet.petType || '-'}</Text>
+        <Text>Pet weigth: {this.props.pet && this.props.pet.weight || '-'}</Text>
+        <Text>Pet birthday: {this.props.pet && this.props.pet.birthday || new Date().toString() }</Text>
+      </View>
   }
 }
 
