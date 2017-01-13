@@ -44,7 +44,7 @@ class PetList extends React.Component{
 																					{ id: 'petDetail',
 																						title: 'Detail',
 																						props: { navEvents: this.props.navEvents,
-																										item: rowData }}
+																										pet: rowData }}
 																				)
 																			}
 																			onDelete={() => {

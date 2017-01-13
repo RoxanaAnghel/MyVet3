@@ -115,7 +115,6 @@ const NavigationBarRouteMapper = {
     switch (route.id) {
       case 'petList':
           if (route.props.pet) {
-            console.log(route.props.item);
                return <View/>
           }
         return (
@@ -140,6 +139,19 @@ const NavigationBarRouteMapper = {
             </Text>
           </TouchableOpacity>
         )
+        case 'petDetail':
+          if (route.props.pet) {
+            return <View/>
+          }
+          return (
+            <TouchableOpacity
+              onPress={() => route.props.navEvents.emit('edit')}
+              style={styles.navBarRightButton}>
+              <Text style={[styles.navBarText, styles.navBarButtonText]}>
+                Edit
+              </Text>
+            </TouchableOpacity>
+          )
     }
   },
 
