@@ -34,7 +34,8 @@ class PetNew extends React.Component {
   onSave () {
 
     var pet = {};
-    pet.name = guid();
+    pet.name = "Rex #" + guid();
+    pet.id = guid();
     pet.age = "3";
     pet.petType = "dog";
     pet.weight = "5.50";
