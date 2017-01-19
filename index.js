@@ -28,7 +28,7 @@ import {
   ListItem,
 } from 'react-native-elements'
 
-import store from './database/PetStore'
+import store from './database/petStore'
 import Emitter from 'EventEmitter'
 
 const Realm = require('realm');

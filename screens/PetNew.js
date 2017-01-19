@@ -9,6 +9,17 @@ import {
 import mixin from 'react-mixin'
 import Subscribable from 'Subscribable'
 
+
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+
 class PetNew extends React.Component {
 
   constructor (props) {
@@ -23,7 +34,8 @@ class PetNew extends React.Component {
   onSave () {
 
     var pet = {};
-    pet.name = "Rex";
+    pet.name = "Rex #" + guid();
+    pet.id = guid();
     pet.age = "3";
     pet.petType = "dog";
     pet.weight = "5.50";
