@@ -6,7 +6,9 @@ const Realm = require('realm');
 
 const PetSchema = {
   name: 'Pet',
+  primaryKey: 'id',
   properties: {
+    id: 'string',
     name: 'string',
     age: 'string',
     petType: 'string',
@@ -39,7 +41,7 @@ class PetStore {
   edit (pet) {
     let realm = new Realm({schema: [PetSchema]});
     let petToUpdate = realm.objects('Pet').find(row=>{
-      return row.name==pet.name
+      return row.id==pet.id
     })
 
     realm.write(() => {
@@ -52,7 +54,7 @@ class PetStore {
   remove (pet) {
     let realm = new Realm({schema: [PetSchema]});
     let petToRemove = realm.objects('Pet').find(row=>{
-      return row.name==pet.name
+      return row.id==pet.id
     })
 
     realm.write(()=>{

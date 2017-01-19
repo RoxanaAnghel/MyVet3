@@ -29,6 +29,7 @@ class PetEdit extends React.Component {
     super(props)
     this.state = {
       petName: this.props.pet.name,
+      petId: this.props.pet.id,
       petAge: this.props.pet.age,
       petType: this.props.pet.petType,
       petWeight: this.props.pet.weight,
@@ -38,6 +39,7 @@ class PetEdit extends React.Component {
 
   _saveChanges = () => {
     var pet = {};
+    pet.id = this.state.petId;
     pet.name = this.state.petName;
     pet.age = this.state.petAge;
     pet.petType = this.state.petType;
